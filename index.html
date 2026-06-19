@@ -31,18 +31,20 @@
             overflow-x: hidden;
         }
 
-        /* 3D Parallax Background Layer - Enhanced Yellow Glow */
+        /* Fixed 3D Parallax Background Layer - Re-engineered for a bright, ultra-smooth gradient */
         #cinematic-bg {
             position: fixed;
-            top: -20vh; 
+            top: -30vh; 
             left: 0;
             width: 100vw;
-            height: 140vh;
+            height: 160vh;
             background: linear-gradient(180deg, 
-                #3a3301 0%, 
-                #554a02 20%,
-                #1c1901 45%,
-                #030303 75%,
+                #ffeb00 0%, 
+                #ccbc00 12%,
+                #8c8100 28%,
+                #403b00 48%,
+                #141300 70%,
+                #050505 88%,
                 #000000 100%
             );
             z-index: -2;
@@ -220,7 +222,7 @@
             border-radius: 16px;
             overflow: hidden;
             text-align: center;
-            width: 280px; /* Forces explicit sizing for uniform matrix display */
+            width: 280px; 
             transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), 
                         border-color 0.4s, box-shadow 0.4s;
         }
@@ -522,7 +524,7 @@
     <script src="script.js"></script>
 
     <script>
-        // CRITICAL FIX: Stops the browser from jumping down to anchor links when refreshing
+        // Stops the browser from jumping down to anchor links when refreshing
         if (window.history.scrollRestoration) {
             window.history.scrollRestoration = 'manual';
         }
