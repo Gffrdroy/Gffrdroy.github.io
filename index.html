@@ -9,35 +9,50 @@
 
     <style>
         :root {
-            --primary-yellow: #ffeb00;  /* High-visibility racing yellow */
-            --deep-black: #000000;      /* Pure dark track finish */
+            --primary-yellow: #ffeb00;  
+            --deep-black: #050505;      
+            --card-bg: rgba(15, 15, 15, 0.65);
             --text-light: #ffffff;
-            --text-dark: #111111;
+            --text-muted: #888888;
+            --text-dark: #000000;
         }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to bottom, 
-                var(--primary-yellow) 0%, 
-                #2b280a 15%, 
-                #0f0f0f 40%, 
-                var(--deep-black) 100%
-            );
-            background-attachment: scroll;
-            min-height: 100vh;
-            color: var(--text-light);
+        /* Smooth Cinematic Scroll Behavior */
+        html {
             scroll-behavior: smooth;
         }
 
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: linear-gradient(180deg, #111002 0%, var(--deep-black) 12%, #000000 100%);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        /* Scroll Animation Target Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), 
+                        transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Navigation Bar */
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 50px;
-            background-color: rgba(0, 0, 0, 0.9); 
-            border-bottom: 2px solid var(--primary-yellow);
+            padding: 25px 50px;
+            background-color: rgba(0, 0, 0, 0.85); 
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 235, 0, 0.2);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -46,14 +61,16 @@
         nav h1 {
             color: var(--primary-yellow);
             margin: 0;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             font-weight: 900;
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px rgba(255, 235, 0, 0.3);
         }
 
         nav ul {
             list-style: none;
             display: flex;
-            gap: 25px;
+            gap: 35px;
             margin: 0;
             padding: 0;
         }
@@ -62,104 +79,249 @@
             color: var(--text-light);
             text-decoration: none;
             text-transform: uppercase;
-            font-weight: bold;
-            font-size: 0.9rem;
-            transition: color 0.3s;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            transition: color 0.3s, text-shadow 0.3s;
         }
 
         nav a:hover {
             color: var(--primary-yellow);
+            text-shadow: 0 0 8px rgba(255, 235, 0, 0.6);
         }
 
+        /* Hero / Launch Section */
         #hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            padding: 100px 20px 60px 20px;
-            color: var(--text-dark); 
+            min-height: 85vh;
+            padding: 40px 20px;
+            box-sizing: border-box;
         }
 
         #hero h2 {
-            font-size: 3rem;
+            font-size: 4rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
+            letter-spacing: -1px;
+            margin: 0 0 10px 0;
             font-weight: 900;
+            background: linear-gradient(180deg, #ffffff 40%, #888888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         #hero p {
             font-size: 1.2rem;
-            font-weight: 500;
-            opacity: 0.9;
+            font-weight: 400;
+            color: var(--primary-yellow);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin: 0 0 40px 0;
         }
 
         #car-viewer {
-            width: 85%;
-            max-width: 1000px;
-            height: 450px;
-            margin: 40px auto 0 auto;
-            background: radial-gradient(circle, #1a1a1a 0%, #0a0a0a 100%);
-            border-radius: 12px;
-            border: 2px solid var(--text-dark);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            width: 90%;
+            max-width: 1100px;
+            height: 480px;
+            background: radial-gradient(circle at center, #151515 0%, #020202 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 40px rgba(0,0,0,0.7);
         }
 
-        #portfolios {
-            padding: 100px 50px;
-            text-align: center;
+        /* General Section Layout */
+        section {
+            padding: 120px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        #portfolios h3 {
+        .section-title {
             font-size: 2.5rem;
             text-transform: uppercase;
             letter-spacing: 2px;
-            color: var(--primary-yellow);
-            margin-bottom: 40px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
         }
 
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-yellow);
+            margin: 15px auto 0 auto;
+            border-radius: 2px;
+        }
+
+        /* Massive Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .team-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            overflow: hidden;
+            text-align: center;
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), 
+                        border-color 0.4s, box-shadow 0.4s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 235, 0, 0.4);
+            box-shadow: 0 15px 35px rgba(255, 235, 0, 0.08);
+        }
+
+        .member-image-slot {
+            width: 100%;
+            height: 280px;
+            background-color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .member-info {
+            padding: 25px 20px;
+        }
+
+        .member-info h4 {
+            margin: 0 0 5px 0;
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .member-info p {
+            margin: 0;
+            color: var(--primary-yellow);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* Corporate Sponsorships Section */
+        .sponsor-tier-container {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .tier-group {
+            text-align: center;
+        }
+
+        .tier-title {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            color: var(--text-muted);
+        }
+
+        /* Customizing individual tier labels */
+        .tier-group.platinum .tier-title { color: #e5e4e2; text-shadow: 0 0 15px rgba(229,228,226,0.3); }
+        .tier-group.gold .tier-title { color: #ffd700; text-shadow: 0 0 15px rgba(255,215,0,0.3); }
+
+        .sponsor-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+
+        .sponsor-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px dashed rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, border-style 0.3s, border-color 0.3s;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        /* Dynamic scaling sizing for tiers */
+        .platinum .sponsor-card { width: 340px; height: 160px; background: rgba(255,255,255,0.03); }
+        .gold .sponsor-card { width: 260px; height: 120px; }
+        .silver .sponsor-card { width: 190px; height: 95px; font-size: 0.8rem; }
+
+        .sponsor-card:hover {
+            background: rgba(255, 235, 0, 0.04);
+            border-style: solid;
+            border-color: var(--primary-yellow);
+            color: var(--text-light);
+        }
+
+        /* Documents / Portfolios */
         .portfolio-grid {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 40px;
+            gap: 30px;
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.03);
+        .portfolio-card {
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             padding: 40px;
-            border-radius: 16px;
-            width: 320px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-top: 5px solid var(--primary-yellow);
-            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: 14px;
+            width: 300px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 4px solid var(--primary-yellow);
+            transition: transform 0.3s;
         }
 
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(255, 235, 0, 0.1);
+        .portfolio-card:hover {
+            transform: translateY(-5px);
         }
 
-        .card h4 {
-            font-size: 1.5rem;
-            margin-top: 0;
-            color: #ffffff;
+        .portfolio-card h4 {
+            font-size: 1.4rem;
+            margin: 0 0 10px 0;
         }
 
-        .card p {
-            color: #cccccc;
+        .portfolio-card p {
+            color: var(--text-muted);
             font-size: 0.95rem;
             line-height: 1.5;
+            margin-bottom: 25px;
         }
 
         .btn {
             display: inline-block;
-            margin-top: 20px;
-            padding: 12px 28px;
+            padding: 12px 24px;
             background-color: var(--primary-yellow);
             color: var(--text-dark);
             text-decoration: none;
             text-transform: uppercase;
-            font-weight: bold;
-            font-size: 0.85rem;
+            font-weight: 800;
+            font-size: 0.8rem;
             letter-spacing: 1px;
             border-radius: 6px;
             transition: background-color 0.3s, transform 0.2s;
@@ -167,43 +329,154 @@
 
         .btn:hover {
             background-color: #ffffff;
-            transform: scale(1.05);
+            transform: scale(1.03);
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
+
     <nav>
         <h1>PHOTON RACING</h1>
         <ul>
-            <li><a href="#team">The Team</a></li>
-            <li><a href="#portfolios">Portfolios</a></li>
-            <li><a href="#booth">Trade Booth</a></li>
+            <li><a href="#hero">Track</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#sponsors">Partners</a></li>
+            <li><a href="#portfolios">Docs</a></li>
         </ul>
     </nav>
 
     <header id="hero">
-        <h2>At the speed of light.</h2>
-        <p>Welcome to the official home of Photon.</p>
-        <div id="car-viewer"></div>
+        <h2 class="reveal">PHOTON RACING</h2>
+        <p class="reveal">Speed. Precision. Innovation.</p>
+        <div id="car-viewer" class="reveal"></div>
     </header>
 
-    <section id="portfolios">
-        <h3>Team Documents</h3>
-        <div class="portfolio-grid">
-            <div class="card">
-                <h4>Engineering Portfolio</h4>
-                <p>Aerodynamics, physics, and manufacturing processes.</p>
-                <a href="#" class="btn">Download PDF</a>
+    <section id="team">
+        <h3 class="section-title reveal">The Roster</h3>
+        <div class="team-grid">
+            
+            <div class="team-card reveal">
+                <div class="member-image-slot">Placeholder Photo</div>
+                <div class="member-info">
+                    <h4>Member Name</h4>
+                    <p>Team Manager</p>
+                </div>
             </div>
-            <div class="card">
+
+            <div class="team-card reveal">
+                <div class="member-image-slot">Placeholder Photo</div>
+                <div class="member-info">
+                    <h4>Member Name</h4>
+                    <p>Manufacturing Engineer</p>
+                </div>
+            </div>
+
+            <div class="team-card reveal">
+                <div class="member-image-slot">Placeholder Photo</div>
+                <div class="member-info">
+                    <h4>Member Name</h4>
+                    <p>Design Engineer</p>
+                </div>
+            </div>
+
+            <div class="team-card reveal">
+                <div class="member-image-slot">Placeholder Photo</div>
+                <div class="member-info">
+                    <h4>Member Name</h4>
+                    <p>Graphic Designer</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="sponsors">
+        <h3 class="section-title reveal">Our Partners</h3>
+        <div class="sponsor-tier-container">
+            
+            <div class="tier-group platinum reveal">
+                <div class="tier-title">Platinum Partners</div>
+                <div class="sponsor-grid">
+                    <div class="sponsor-card">Sponsor Slot</div>
+                    <div class="sponsor-card">Sponsor Slot</div>
+                </div>
+            </div>
+
+            <div class="tier-group gold reveal">
+                <div class="tier-title">Gold Partners</div>
+                <div class="sponsor-grid">
+                    <div class="sponsor-card">Sponsor Slot</div>
+                    <div class="sponsor-card">Sponsor Slot</div>
+                    <div class="sponsor-card">Sponsor Slot</div>
+                </div>
+            </div>
+
+            <div class="tier-group silver reveal">
+                <div class="tier-title">Silver Partners</div>
+                <div class="sponsor-grid">
+                    <div class="sponsor-card">Partner</div>
+                    <div class="sponsor-card">Partner</div>
+                    <div class="sponsor-card">Partner</div>
+                    <div class="sponsor-card">Partner</div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="portfolios">
+        <h3 class="section-title reveal">Engineering & Enterprise</h3>
+        <div class="portfolio-grid">
+            <div class="portfolio-card reveal">
+                <h4>Engineering Portfolio</h4>
+                <p>Deep-dive analysis on fluid dynamics, chassis design optimization, and machining tolerances.</p>
+                <a href="#" class="btn">View Document</a>
+            </div>
+            <div class="portfolio-card reveal">
                 <h4>Enterprise Portfolio</h4>
-                <p>Project management, marketing, and sponsorships.</p>
-                <a href="#" class="btn">Download PDF</a>
+                <p>Brand activation strategy, corporate outreach systems, budget tracking, and project workflow matrices.</p>
+                <a href="#" class="btn">View Document</a>
             </div>
         </div>
     </section>
 
+    <footer>
+        <p>&copy; 2026 PHOTON RACING. ALL RIGHTS RESERVED.</p>
+    </footer>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="script.js"></script>
+
+    <script>
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.12
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    // Stop watching once animated into view to preserve processing power
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+
+        // Attach observer to every element with the 'reveal' class
+        document.querySelectorAll('.reveal').forEach(element => {
+            observer.observe(element);
+        });
+    </script>
 </body>
 </html>
