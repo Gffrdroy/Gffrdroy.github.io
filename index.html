@@ -19,7 +19,6 @@
             --text-dark: #000000;
         }
 
-        /* Prevent system jump behavior */
         html {
             scroll-behavior: smooth;
         }
@@ -34,13 +33,13 @@
             letter-spacing: 0.5px;
         }
 
-        /* Parallax Layer 1: Deepest Background Gradient Canvas */
+        /* PARALLAX LAYER 1: Deepest Background Gradient (Over-scaled to prevent movement clipping) */
         #cinematic-bg {
             position: fixed;
-            top: 0; 
+            top: -15vh; 
             left: 0;
             width: 100vw;
-            height: 100vh; 
+            height: 130vh; 
             background: linear-gradient(180deg, 
                 #ffeb00 0%, 
                 #ffeb00 15%,   
@@ -54,23 +53,23 @@
             will-change: transform;
         }
 
-        /* Parallax Layer 2: Deep Background Cyber Grid Array */
+        /* PARALLAX LAYER 2: Deep Background Cyber Grid Array */
         #bg-grid-overlay {
             position: fixed;
-            top: 0;
+            top: -15vh;
             left: 0;
             width: 100vw;
-            height: 100vh;
-            background-image: linear-gradient(rgba(255, 235, 0, 0.015) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255, 235, 0, 0.015) 1px, transparent 1px);
-            background-size: 50px 50px;
+            height: 130vh;
+            background-image: linear-gradient(rgba(255, 235, 0, 0.035) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 235, 0, 0.035) 1px, transparent 1px);
+            background-size: 60px 60px;
             z-index: -2;
             pointer-events: none;
             transform: translateY(0);
             will-change: transform;
         }
 
-        /* Scroll Animation Target Classes */
+        /* Scroll Animation Reveal Targets */
         .reveal {
             opacity: 0;
             transform: translateY(50px);
@@ -83,7 +82,7 @@
             transform: translateY(0);
         }
 
-        /* Navigation Bar Structure */
+        /* Navigation Structure */
         nav {
             display: flex;
             justify-content: space-between;
@@ -116,7 +115,7 @@
             user-select: none;
         }
 
-        /* Refined Top-Left Studio Interactive Controller Toggle */
+        /* Studio Interaction Switch Toggle */
         .studio-toggle-btn {
             background: transparent;
             border: 1px solid rgba(255, 235, 0, 0.4);
@@ -170,7 +169,7 @@
             opacity: 1;
         }
 
-        /* Spacious Open Area Cinematic Hero Block */
+        /* Spacious Open Area Hero Frame Block */
         #hero {
             position: relative;
             width: 100vw;
@@ -186,7 +185,7 @@
             background: transparent;
         }
 
-        /* Parallax Layer 4: Foreground Typography Layer Container */
+        /* PARALLAX LAYER 4: Foreground Typography Frame */
         #hero-text-container {
             position: absolute;
             top: 0;
@@ -199,7 +198,7 @@
             align-items: center;
             z-index: 10;
             pointer-events: none;
-            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), transform 0.8s ease;
+            transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
             will-change: transform, opacity;
         }
 
@@ -224,7 +223,7 @@
             text-shadow: 0 4px 15px rgba(0,0,0,0.6);
         }
 
-        /* Parallax Layer 3: Midground 3D Model Framing Viewport Container */
+        /* PARALLAX LAYER 3: Midground 3D Model Viewport Containment Box */
         #car-viewer {
             width: 100%;
             height: 100%;
@@ -242,14 +241,13 @@
         model-viewer {
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, rgba(17, 17, 17, 0.8) 0%, rgba(1, 1, 1, 0.95) 100%);
-            /* Locked out by default until studio mode mounts */
+            background: radial-gradient(circle at center, rgba(17, 17, 17, 0.75) 0%, rgba(1, 1, 1, 0.95) 100%);
             pointer-events: none;
             --interpolation-decay: 5;
             transition: pointer-events 0.3s ease;
         }
 
-        /* Floating Fullscreen Toggle Widget */
+        /* Fullscreen View Widget Switcher */
         .fullscreen-toggle {
             position: absolute;
             bottom: 140px; 
@@ -276,7 +274,6 @@
             transform: translateY(10px);
         }
 
-        /* Reveals when Studio Mode unlocks interactions */
         .fullscreen-toggle.visible-widget {
             opacity: 1;
             pointer-events: auto;
@@ -290,7 +287,7 @@
             box-shadow: 0 0 20px rgba(255, 235, 0, 0.4);
         }
 
-        /* Floating Horizontal Media HUD Details Panel */
+        /* Lower Media HUD Bar */
         .viewer-details {
             position: absolute;
             bottom: 0;
@@ -345,15 +342,14 @@
             box-shadow: 0 10px 25px rgba(220, 39, 67, 0.35);
         }
 
-        /* Webkit Fullscreen Overrides */
         #car-viewer:fullscreen .fullscreen-toggle {
             bottom: 50px;
         }
 
-        /* Spacious Section Framework Layout */
+        /* Content Sections Base (Layered above spatial depth grids explicitly) */
         section {
             position: relative;
-            z-index: 30; /* Pulls scrolling content cards explicitly above floating spatial layers */
+            z-index: 30; 
             padding: 180px 60px;
             max-width: 1300px;
             margin: 0 auto;
@@ -379,7 +375,6 @@
             border-radius: 2px;
         }
 
-        /* Structured Team Layout Split */
         .sub-tier-title {
             font-size: 1.1rem;
             text-transform: uppercase;
@@ -459,7 +454,6 @@
             opacity: 0.85;
         }
 
-        /* Corporate Partnerships Pipeline Layout */
         .sponsor-tier-container {
             display: flex;
             flex-direction: column;
@@ -515,7 +509,6 @@
             color: var(--text-light);
         }
 
-        /* Documentation & Portfolios Layout */
         .portfolio-grid {
             display: flex;
             justify-content: center;
@@ -578,7 +571,6 @@
             box-shadow: 0 0 20px rgba(255, 235, 0, 0.35);
         }
 
-        /* Interactive Contact Portal Area */
         #contact {
             text-align: center;
             max-width: 900px;
@@ -603,7 +595,6 @@
             letter-spacing: 0.3px;
         }
 
-        /* Institutional Logos Banner Row */
         .institutional-logos {
             position: relative;
             z-index: 30;
@@ -871,17 +862,15 @@
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="script.js"></script>
 
     <script>
+        // Force manual alignment on fresh document boot sequences
         if (window.history.scrollRestoration) {
             window.history.scrollRestoration = 'manual';
         }
-        
         if (window.location.hash) {
             history.replaceState("", document.title, window.location.pathname + window.location.search);
         }
-        
         window.scrollTo(0, 0);
 
         const bgGradient = document.getElementById('cinematic-bg');
@@ -889,40 +878,48 @@
         const carViewerContainer = document.getElementById('car-viewer');
         const heroTextContainer = document.getElementById('hero-text-container');
 
-        // Multi-Layered Scroll Parallax Architecture
-        let lastKnownScrollPosition = 0;
         let ticking = false;
 
+        // HIGH-PERFORMANCE MULTI-PLANE SYSTEM
         function updateParallax(scrollPos) {
-            // Only calculate positioning frames while the landing view is visible
+            // Compute translations only if landing hero layers remain within active spatial sight
             if (scrollPos <= window.innerHeight * 1.5) {
-                // Layer 1: Background Gradient Canvas (Slow pull down + scaling expansion)
-                bgGradient.style.transform = `translateY(-${scrollPos * 0.2}px) scale(${1 + (scrollPos * 0.0001)})`;
                 
-                // Layer 2: Cyber Tech Grid Array (Downward glide path split)
+                // LAYER 1: Deep Gradient Background (Fixed frame tracking - glides slowest)
+                bgGradient.style.transform = `translateY(-${scrollPos * 0.15}px) scale(${1 + (scrollPos * 0.0001)})`;
+                
+                // LAYER 2: Cyber Grid Lines (Fixed frame tracking - shifts past gradient map background)
                 bgGrid.style.transform = `translateY(-${scrollPos * 0.35}px)`;
                 
-                // Layer 3: Car Viewer Framing Container (Midground depth track layer)
-                carViewerContainer.style.transform = `translateY(${scrollPos * 0.22}px)`;
+                // LAYER 3: Car Viewer Framing Box (Absolute layout context - floats on standalone plane)
+                carViewerContainer.style.transform = `translateY(${scrollPos * 0.40}px)`;
                 
-                // Layer 4: Foreground Typography Frame (Fastest slide value clearance)
-                heroTextContainer.style.transform = `translateY(${scrollPos * 0.55}px)`;
+                // LAYER 4: Foreground Main Typography Headers (Absolute layout context - flies away fastest)
+                heroTextContainer.style.transform = `translateY(${scrollPos * 0.20}px)`;
             }
         }
 
-        window.addEventListener('scroll', () => {
-            lastKnownScrollPosition = window.pageYOffset;
+        // Cross-environmental parsing handler (intercepts browser windows and sandboxed container scroll layers)
+        function captureScrollValue() {
+            return window.scrollY || window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+        }
 
+        function triggerScrollProcess() {
+            const currentScrollPos = captureScrollValue();
             if (!ticking) {
                 window.requestAnimationFrame(() => {
-                    updateParallax(lastKnownScrollPosition);
+                    updateParallax(currentScrollPos);
                     ticking = false;
                 });
                 ticking = true;
             }
-        }, { passive: true });
+        }
 
-        // Scroll Intersection Reveal System 
+        // Dual-registration pipeline captures native desktop windowing and sandboxed container scroll environments
+        window.addEventListener('scroll', triggerScrollProcess, { passive: true });
+        document.addEventListener('scroll', triggerScrollProcess, { passive: true });
+
+        // Scroll Intersection Reveal Elements
         const observerOptions = {
             root: null,
             rootMargin: '0px',
@@ -953,10 +950,8 @@
         let isStudioInteractive = false;
 
         function renderCinematicFlyby() {
-            // Cut execution loop if user holds active manual interactive control overrides
             if (isStudioInteractive) return;
 
-            // Ambient background cinematic orbit loop parameters
             orbitTimeline += 0.0022; 
 
             const horizontalOrbit = (orbitTimeline * 180 / Math.PI) % 360; 
@@ -977,27 +972,20 @@
             }, 400);
         });
 
-        // Top-Left Studio Interaction State Handler
         studioToggle.addEventListener('click', (e) => {
             e.preventDefault();
             isStudioInteractive = !isStudioInteractive;
 
             if (isStudioInteractive) {
-                // Unlock rendering pipelines & mount hardware input listeners
                 carViewer.setAttribute('camera-controls', '');
                 carViewer.style.pointerEvents = 'auto';
                 
-                // Hide overlapping text layers to keep workspace open
                 heroTextContainer.style.opacity = '0';
-                
-                // Show bottom-left helper fullscreen widget controls
                 fullscreenWidget.classList.add('visible-widget');
                 
-                // Transition navigation switch tracking style
                 studioToggle.textContent = 'Lock Canvas';
                 studioToggle.classList.add('active-studio');
             } else {
-                // Strip interactions out and lock canvas back into background layer
                 carViewer.removeAttribute('camera-controls');
                 carViewer.style.pointerEvents = 'none';
                 
@@ -1007,13 +995,12 @@
                 studioToggle.textContent = 'Explore Car';
                 studioToggle.classList.remove('active-studio');
 
-                // Return handling back to cinematic flight paths smoothly
                 requestAnimationFrame(renderCinematicFlyby);
             }
         });
 
         /* ==========================================================================
-           HARDWARE FULLSCREEN INTERACTIVE CONTROLS API
+           HARDWARE FULLSCREEN CONTROLS API
            ========================================================================== */
         const viewRenderContainer = document.getElementById('car-viewer');
 
