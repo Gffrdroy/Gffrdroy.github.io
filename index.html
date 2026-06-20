@@ -3,411 +3,1108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHOTON | STEM Racing Engine</title>
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+    <title>Photon | STEM Team</title>
     
+    <!-- Link to the custom tab icon -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- Import the web component for interactive 3D rendering and animations -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+
+    <!-- Embedded Stylesheet -->
     <style>
-        /* ==========================================================================
-           1. GLOBAL VARIABLES & RESET
-           ========================================================================== */
         :root {
-            --primary-yellow: #ffeb00;
-            --deep-black: #050505;
-            --surface-color: rgba(20, 20, 20, 0.85);
-            --text-main: #ffffff;
-            --text-muted: #a0a0a0;
-            --accent-glow: rgba(255, 235, 0, 0.4);
+            --primary-yellow: #ffeb00;  
+            --deep-black: #000000;      
+            --card-bg: rgba(12, 12, 12, 0.85);
+            --text-light: #ffffff;
+            --text-muted: #aaaaaa;
+            --text-dark: #000000;
+            
+            /* High-performance scroll coordinate tracking primitive */
+            --scroll-y: 0px;
         }
 
-        *, *::before, *::after {
+        html {
+            scroll-behavior: smooth;
+            background-color: var(--deep-black);
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: var(--deep-black);
+            color: var(--text-light);
+            overflow-x: hidden;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+        /* PARALLAX LAYER 1: Cyber Grid Matrix 
+           Configured as a static viewport overlay that seamlessly shifts texture loops
+        */
+        #bg-grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: linear-gradient(rgba(255, 235, 0, 0.07) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 235, 0, 0.07) 1px, transparent 1px);
+            background-size: 60px 60px;
+            background-position-y: calc(var(--scroll-y) * -0.15);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Ambient Parallax Grid Glow Space Platform Wrapper */
+        #glow-particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* Massively expanded, ultra-bright glowing orb structures */
+        .glow-particle {
+            position: absolute;
+            left: var(--x);
+            top: var(--y);
+            width: var(--size, 25px);
+            height: var(--size, 25px);
+            background-color: var(--primary-yellow);
+            border-radius: 50%;
+            /* Multi-layered extreme glow envelope for high-intensity luminescence */
+            box-shadow: 0 0 25px 10px rgba(255, 235, 0, 0.6),
+                        0 0 60px 25px rgba(255, 235, 0, 0.3),
+                        0 0 120px 50px rgba(255, 235, 0, 0.15);
+            animation: breatheGlow var(--pulse-duration) ease-in-out infinite alternate;
+            animation-delay: var(--pulse-delay);
+            will-change: opacity, transform;
+            transform: translateY(calc(var(--scroll-y) * 0.08));
+        }
+
+        @keyframes breatheGlow {
+            0% {
+                opacity: 0.2;
+                transform: translateY(calc(var(--scroll-y) * 0.08)) scale(0.85);
+            }
+            100% {
+                opacity: 0.9;
+                transform: translateY(calc(var(--scroll-y) * 0.08)) scale(1.15);
+            }
+        }
+
+        /* Scroll Animation Reveal Targets */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s cubic-bezier(0.215, 0.610, 0.355, 1), 
+                        transform 1s cubic-bezier(0.215, 0.610, 0.355, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Navigation Structure */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 60px;
+            background-color: rgba(0, 0, 0, 0.95); 
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px); 
+            border-bottom: 1px solid rgba(255, 235, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-left-cluster {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        nav h1 {
+            color: var(--primary-yellow);
+            margin: 0;
+            letter-spacing: 6px;
+            font-weight: 900;
+            font-size: 1.6rem;
+            text-shadow: 0 0 15px rgba(255, 235, 0, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Studio Interaction Switch Toggle */
+        .studio-toggle-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 235, 0, 0.4);
+            color: var(--primary-yellow);
+            padding: 8px 18px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .studio-toggle-btn:hover {
+            background: rgba(255, 235, 0, 0.1);
+            box-shadow: 0 0 15px rgba(255, 235, 0, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .studio-toggle-btn.active-studio {
+            background: var(--primary-yellow);
+            color: #000000;
+            border-color: var(--primary-yellow);
+            box-shadow: 0 0 20px rgba(255, 235, 0, 0.4);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 4px;
+            opacity: 0.8;
+        }
+
+        nav a:hover {
+            color: var(--primary-yellow);
+            opacity: 1;
+        }
+
+        /* Spacious Open Area Hero Frame Block */
+        #hero {
+            position: relative;
+            width: 100vw;
+            height: calc(100vh - 95px); 
+            min-height: 650px;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+            z-index: 10;
+        }
+
+        #hero-text-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; 
+            padding-top: 7vh; 
+            align-items: center;
+            z-index: 15;
+            pointer-events: none;
+            transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+            transform: translateY(calc(var(--scroll-y) * 0.15));
             box-sizing: border-box;
         }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--deep-black);
-            color: var(--text-main);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* ==========================================================================
-           2. NAVIGATION & HEADER
-           ========================================================================== */
-        nav { 
-            position: fixed; 
-            top: 0; 
-            width: 100%; 
-            padding: 25px 5vw; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            z-index: 1000; 
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 100%);
-            backdrop-filter: blur(5px); 
-        }
-
-        nav h1 { 
-            margin: 0; 
-            font-size: 1.8rem; 
-            letter-spacing: 4px; 
-            font-weight: 900;
-            color: var(--primary-yellow);
-        }
-
-        .nav-links { display: flex; gap: 30px; }
-        .nav-links a { 
-            color: var(--text-main); 
-            text-decoration: none; 
-            font-weight: 600; 
-            font-size: 0.9rem; 
-            letter-spacing: 1px;
+        #hero h2 {
+            font-size: 7.5rem;
             text-transform: uppercase;
-            transition: color 0.3s;
-        }
-        .nav-links a:hover { color: var(--primary-yellow); }
-
-        /* ==========================================================================
-           3. HERO ENGINE & SCENE WRAPPER (Fullscreen Target)
-           ========================================================================== */
-        #hero { 
-            position: relative; 
-            width: 100vw; 
-            height: 100vh; 
-            background: radial-gradient(circle at center, #111 0%, var(--deep-black) 100%);
+            letter-spacing: 4px;
+            margin: 0 0 10px 0;
+            font-weight: 900;
+            color: var(--primary-yellow); 
+            text-shadow: 0 0 40px rgba(255, 235, 0, 0.35);
         }
 
-        /* The wrapper encapsulates the 3D model, particles, and UI for fullscreen */
-        #scene-wrapper {
-            position: relative;
+        #hero p {
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #ffffff;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin: 0;
+            opacity: 0.9;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        }
+
+        /* PARALLAX LAYER 3: Interactive 3D Model Viewport */
+        #car-viewer {
             width: 100%;
             height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: transparent;
+            z-index: 12;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
+            will-change: transform;
+            transform: translateY(calc(var(--scroll-y) * 0.28));
+        }
+
+        model-viewer {
+            width: 100%;
+            height: 100%;
+            background-color: transparent !important;
+            background: transparent !important;
+            position: relative;
+            z-index: 14;
+            pointer-events: none;
+            --interpolation-decay: 5;
+            transition: pointer-events 0.3s ease;
+        }
+
+        /* Fullscreen View Widget Switcher */
+        .fullscreen-toggle {
+            position: absolute;
+            bottom: 140px; 
+            left: 60px;
+            z-index: 25;
+            background: rgba(10, 10, 10, 0.85);
+            border: 1px solid rgba(255, 235, 0, 0.4);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            justify-content: center;
-        }
-
-        /* ==========================================================================
-           4. PERSISTENT PARTICLE SYSTEM (Tracks Theta)
-           ========================================================================== */
-        #particle-system {
-            position: absolute;
-            /* Oversized to 200% to prevent edge clipping during rotation */
-            top: -50%; 
-            left: -50%;
-            width: 200%; 
-            height: 200%;
+            gap: 10px;
+            opacity: 0;
             pointer-events: none;
-            z-index: 1;
-            transform: rotate(0rad);
-            /* Linear transition smooths out the raw mouse drag data */
-            transition: transform 0.08s linear; 
+            transform: translateY(10px);
         }
 
-        .orb {
+        .fullscreen-toggle.visible-widget {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0);
+        }
+
+        .fullscreen-toggle:hover {
+            background: var(--primary-yellow);
+            color: #000000;
+            border-color: var(--primary-yellow);
+            box-shadow: 0 0 20px rgba(255, 235, 0, 0.5);
+        }
+
+        /* Lower Media HUD Bar */
+        .viewer-details {
             position: absolute;
-            background: radial-gradient(circle, var(--primary-yellow) 0%, transparent 70%);
-            border-radius: 50%;
-            opacity: 0.4;
-            filter: blur(5px);
-            mix-blend-mode: screen;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 45px 60px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.8) 70%, transparent 100%);
+            border-top: none;
+            text-align: left;
+            z-index: 20;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 50px;
         }
 
-        /* ==========================================================================
-           5. 3D MODEL VIEWER
-           ========================================================================== */
-        model-viewer {
-            width: 100%; 
-            height: 100%;
-            z-index: 2;
-            --poster-color: transparent;
+        .viewer-caption {
+            margin: 0;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: 0.5px;
+            max-width: 60%;
         }
 
-        /* ==========================================================================
-           6. INTERACTIVE CONTROLS
-           ========================================================================== */
-        .controls {
-            position: absolute;
-            bottom: 5vh; 
-            left: 5vw;
-            z-index: 10;
-            display: flex; 
-            gap: 15px;
-        }
-
-        button {
-            padding: 14px 30px;
-            background: rgba(0, 0, 0, 0.6);
+        .viewer-caption .highlight {
             color: var(--primary-yellow);
-            border: 1px solid var(--primary-yellow);
-            cursor: pointer;
+            font-weight: 800;
             text-transform: uppercase;
+        }
+
+        .instagram-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 4px;
             font-weight: 700;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(10px);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .instagram-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(220, 39, 67, 0.35);
+        }
+
+        /* FULLSCREEN ADJUSTMENTS */
+        #car-viewer:fullscreen .viewer-details { display: none !important; }
+        #car-viewer:fullscreen {
+            background-color: #000000 !important;
+            background-image: linear-gradient(rgba(255, 235, 0, 0.12) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 235, 0, 0.12) 1px, transparent 1px) !important;
+            background-size: 50px 50px !important;
+        }
+
+        #car-viewer:-webkit-full-screen .viewer-details { display: none !important; }
+        #car-viewer:-webkit-full-screen {
+            background-color: #000000 !important;
+            background-image: linear-gradient(rgba(255, 235, 0, 0.12) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 235, 0, 0.12) 1px, transparent 1px) !important;
+            background-size: 50px 50px !important;
+        }
+
+        #car-viewer:fullscreen .fullscreen-toggle { bottom: 50px; }
+        #car-viewer:-webkit-full-screen .fullscreen-toggle { bottom: 50px; }
+
+        /* Content Sections Base */
+        section {
+            position: relative;
+            z-index: 30; 
+            padding: 180px 60px;
+            max-width: 1300px;
+            margin: 0 auto;
+            background: transparent;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 90px;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary-yellow);
+            margin: 20px auto 0 auto;
             border-radius: 2px;
         }
 
-        button:hover, button.active {
-            background: var(--primary-yellow);
-            color: var(--deep-black);
-            box-shadow: 0 0 20px var(--accent-glow);
+        .sub-tier-title {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--primary-yellow);
+            text-align: center;
+            margin-bottom: 50px;
+            font-weight: 800;
+            opacity: 0.9;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            position: relative;
+            padding: 4px 14px;
+            border-radius: 4px;
+            cursor: default;
         }
 
-        /* ==========================================================================
-           7. MODULAR CONTENT SECTIONS
-           ========================================================================== */
-        section { 
-            padding: 120px 5vw; 
-            max-width: 1600px; 
-            margin: auto; 
+        .team-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 45px;
         }
 
-        .section-header {
-            font-size: 3rem; 
-            margin-bottom: 60px; 
-            font-weight: 900;
+        .team-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 235, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            text-align: center;
+            width: 290px; 
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1), 
+                        border-color 0.5s, box-shadow 0.5s;
+        }
+
+        .team-card:hover {
+            transform: translateY(-12px);
+            border-color: rgba(255, 235, 0, 0.45);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 235, 0, 0.1);
+        }
+
+        .member-image-slot {
+            width: 100%;
+            height: 310px;
+            background-color: #080808;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555555;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid rgba(255, 235, 0, 0.05);
+        }
+
+        .member-info {
+            padding: 30px 20px;
+        }
+
+        .member-info h4 {
+            margin: 0 0 8px 0;
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .member-info p {
+            margin: 0;
+            color: var(--primary-yellow);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.85;
+        }
+
+        .sponsor-tier-container {
+            display: flex;
+            flex-direction: column;
+            gap: 90px;
+        }
+
+        .tier-group {
+            text-align: center;
+        }
+
+        .tier-title {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-weight: 800;
+            margin-bottom: 45px;
+            color: #666666;
+        }
+
+        .tier-group.platinum .tier-title { color: #e5e4e2; text-shadow: 0 0 20px rgba(229,228,226,0.15); }
+        .tier-group.gold .tier-title { color: #ffd700; text-shadow: 0 0 20px rgba(255,215,0,0.15); }
+
+        .sponsor-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .sponsor-card {
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px dashed rgba(255, 235, 0, 0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: background 0.4s, border-style 0.4s, border-color 0.4s, color 0.4s, box-shadow 0.4s;
+            color: #666666;
+            font-weight: 700;
+            font-size: 0.9rem;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-        
-        .section-header span {
-            color: var(--primary-yellow);
+
+        .platinum .sponsor-card { width: 380px; height: 180px; }
+        .gold .sponsor-card { width: 300px; height: 140px; }
+        .silver .sponsor-card { width: 220px; height: 110px; font-size: 0.8rem; }
+
+        .sponsor-card:hover {
+            background: rgba(255, 235, 0, 0.04);
+            border-style: solid;
+            border-color: var(--primary-yellow);
+            color: var(--text-light);
+            box-shadow: 0 0 15px rgba(255, 235, 0, 0.15);
         }
 
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
-            gap: 30px; 
+        .portfolio-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 45px;
         }
 
-        .card { 
-            background: var(--surface-color); 
-            padding: 50px 40px; 
-            border-top: 3px solid transparent;
-            border-left: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.4s ease; 
-            position: relative;
-            overflow: hidden;
+        .portfolio-card {
+            background: var(--card-bg);
+            padding: 55px;
+            border-radius: 12px;
+            width: 340px;
+            border: 1px solid rgba(255, 235, 0, 0.1);
+            border-top: 4px solid var(--primary-yellow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s;
         }
 
-        .card:hover { 
-            transform: translateY(-10px); 
-            border-top: 3px solid var(--primary-yellow);
-            background: rgba(30, 30, 30, 0.9);
+        .portfolio-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8), 0 0 15px rgba(255, 235, 0, 0.05);
         }
 
-        .card h3 { 
-            margin-top: 0; 
-            font-size: 1.5rem; 
-            color: var(--text-main);
-            margin-bottom: 15px;
+        .portfolio-card h4 {
+            font-size: 1.5rem;
+            margin: 0 0 16px 0;
+            font-weight: 800;
+            letter-spacing: 0.5px;
         }
 
-        .card h4 {
-            color: var(--primary-yellow);
-            font-size: 0.9rem;
+        .portfolio-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background-color: var(--primary-yellow);
+            color: var(--text-dark);
+            border: 2px solid var(--primary-yellow);
+            text-decoration: none;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            font-weight: 800;
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #000000;
+            color: var(--primary-yellow);
+            border-color: var(--primary-yellow);
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(255, 235, 0, 0.4);
+        }
+
+        #contact {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .contact-box {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 235, 0, 0.2);
+            border-radius: 12px;
+            padding: 70px 50px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 235, 0, 0.05);
+        }
+
+        .contact-box p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.8;
+            margin: 0 0 45px 0;
+            letter-spacing: 0.3px;
+        }
+
+        .institutional-logos {
+            position: relative;
+            z-index: 35;
+            border-top: 1px solid rgba(255, 235, 0, 0.1);
+            background-color: rgba(2, 2, 2, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        .institutional-logos h5 {
+            margin: 0 0 45px 0;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #666666;
+        }
+
+        .logo-flex {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 100px;
+            flex-wrap: wrap;
+        }
+
+        .logo-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+            text-decoration: none;
+        }
+
+        .logo-item:hover {
+            transform: scale(1.04);
+        }
+
+        .logo-wrapper {
+            height: 110px;
+            width: 260px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 20px;
         }
 
-        .card p { 
-            font-size: 1rem; 
-            line-height: 1.7; 
-            color: var(--text-muted); 
+        .logo-wrapper img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 6px 15px rgba(0, 0, 0, 0.8));
+        }
+
+        .logo-item p {
             margin: 0;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.5);
         }
 
-        /* ==========================================================================
-           8. FOOTER
-           ========================================================================== */
         footer {
-            background: #000;
-            padding: 60px 5vw;
+            position: relative;
+            z-index: 35;
             text-align: center;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            margin-top: 100px;
+            padding: 50px 20px;
+            font-size: 0.8rem;
+            color: #555555;
+            border-top: 1px solid rgba(255, 235, 0, 0.1);
+            background-color: #000000;
+            letter-spacing: 1.5px;
         }
-        footer p { color: var(--text-muted); font-size: 0.9rem; }
-
     </style>
 </head>
 <body>
 
+    <!-- Infrastructure Base Overlay Layouts -->
+    <div id="bg-grid-overlay"></div>
+    <div id="glow-particles-container"></div>
+
     <nav>
-        <h1>PHOTON</h1>
-        <div class="nav-links">
-            <a href="#engineering">Engineering</a>
-            <a href="#enterprise">Enterprise</a>
-            <a href="#telemetry">Telemetry</a>
+        <div class="nav-left-cluster">
+            <h1 onclick="window.location.href=window.location.pathname">PHOTON</h1>
+            <button class="studio-toggle-btn" id="studio-master-toggle">Explore Car</button>
         </div>
+        <ul>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#sponsors">Partners</a></li>
+            <li><a href="#portfolios">Docs</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
     </nav>
 
+    <!-- Entry Zone Layout -->
     <header id="hero">
-        <div id="scene-wrapper">
-            <div id="particle-system"></div>
-            
+        <div id="hero-text-container">
+            <h2>PHOTON</h2>
+            <p>At the speed of light</p>
+        </div>
+        
+        <div id="car-viewer">
             <model-viewer 
-                id="car-viewer" 
+                id="animated-car"
                 src="2024aramidversion2.0029.glb" 
-                auto-rotate
-                rotation-per-second="15deg"
-                shadow-intensity="1.5" 
-                exposure="1.2"
-                camera-orbit="180deg 75deg 105%">
+                alt="Aramid - 2024 fastest car" 
+                autoplay
+                shadow-intensity="1"
+                exposure="1.25">
             </model-viewer>
 
-            <div class="controls">
-                <button id="mode-btn">Explore Car</button>
-                <button id="fs-btn">Fullscreen UI</button>
+            <button class="fullscreen-toggle" id="fullscreen-widget" title="Toggle Fullscreen Render View">
+                <span>⛶</span> Fullscreen
+            </button>
+
+            <div class="viewer-details">
+                <p class="viewer-caption">
+                    2024 fastest car from previous development team, <span class="highlight">aramid</span>. this is the fastest car in the states history
+                </p>
+                <a href="https://www.instagram.com/photonstemracing?utm_source=qr&igsh=MW5sNTFzbm5vbXVrdA%3D%3D" target="_blank" rel="noopener" class="instagram-btn">
+                    <span>📸</span> View @photonstemracing
+                </a>
             </div>
         </div>
     </header>
 
-    <main>
-        <section id="engineering">
-            <h2 class="section-header">Core <span>Engineering</span></h2>
-            <div class="grid">
-                <div class="card">
-                    <h4>Aerodynamics</h4>
-                    <h3>Gifford Roy</h3>
-                    <p>Directing computational fluid dynamics and drag-reduction geometries to maximize straight-line velocity while maintaining downforce.</p>
+    <!-- Team Roles Section -->
+    <section id="team">
+        <h3 class="section-title reveal">Team Roles</h3>
+        
+        <div style="margin-bottom: 80px;">
+            <h4 class="sub-tier-title reveal">Engineering Division</h4>
+            <div class="team-grid">
+                <div class="team-card reveal">
+                    <div class="member-image-slot">Placeholder Photo</div>
+                    <div class="member-info">
+                        <h4>Gifford Roy</h4>
+                        <p>Design Engineer</p>
+                    </div>
                 </div>
-                <div class="card">
-                    <h4>Materials & Chassis</h4>
-                    <h3>Bruno Gomez Pena</h3>
-                    <p>Evaluating advanced polymers and carbon-composite structures for peak strength-to-weight ratios in the final 2026 build.</p>
+                <div class="team-card reveal">
+                    <div class="member-image-slot">Placeholder Photo</div>
+                    <div class="member-info">
+                        <h4>Bruno Gomez Pena</h4>
+                        <p>Manufacturing Engineer</p>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <section id="enterprise">
-            <h2 class="section-header">Mission <span>Enterprise</span></h2>
-            <div class="grid">
-                <div class="card">
-                    <h4>Operations & Logistics</h4>
-                    <h3>Evan Goodwin & Zeke Short</h3>
-                    <p>Executing master project timelines, procurement routing, and ensuring full regulatory compliance with STEM racing parameters.</p>
+        <div>
+            <h4 class="sub-tier-title reveal">Enterprise Division</h4>
+            <div class="team-grid">
+                <div class="team-card reveal">
+                    <div class="member-image-slot">Placeholder Photo</div>
+                    <div class="member-info">
+                        <h4>Evan Goodwin</h4>
+                        <p>Team Manager</p>
+                    </div>
                 </div>
-                <div class="card">
-                    <h4>Media & Partnerships</h4>
-                    <h3>Lizzie Cooke</h3>
-                    <p>Architecting brand identity, securing corporate sponsorships, and delivering high-fidelity telemetry visualizations to stakeholders.</p>
+                <div class="team-card reveal">
+                    <div class="member-image-slot">Placeholder Photo</div>
+                    <div class="member-info">
+                        <h4>Zeke Short</h4>
+                        <p>Resource Manager</p>
+                    </div>
+                </div>
+                <div class="team-card reveal">
+                    <div class="member-image-slot">Placeholder Photo</div>
+                    <div class="member-info">
+                        <h4>Lizzie Cooke</h4>
+                        <p>Graphic Design</p>
+                    </div>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
+
+    <!-- Sponsorship Pipeline -->
+    <section id="sponsors">
+        <h3 class="section-title reveal">Our Partners</h3>
+        <div class="sponsor-tier-container">
+            <div class="tier-group platinum reveal">
+                <div class="tier-title">Platinum Partners</div>
+                <div class="sponsor-grid">
+                    <div class="sponsor-card">Sponsor Slot</div>
+                    <div class="sponsor-card">Sponsor Slot</div>
+                </div>
+            </div>
+            <div class="tier-group gold reveal">
+                <div class="tier-title">Gold Partners</div>
+                <div class="sponsor-grid">
+                    <div class="sponsor-card">Sponsor Slot</div>
+                    <div class="sponsor-card">Sponsor Slot</div>
+                    <div class="sponsor-card">Sponsor Slot</div>
+                </div>
+            </div>
+            <div class="tier-group silver reveal">
+                <div class="tier-title">Silver Partners</div>
+                <div class="sponsor-grid">
+                    <div class="sponsor-card">Partner</div>
+                    <div class="sponsor-card">Partner</div>
+                    <div class="sponsor-card">Partner</div>
+                    <div class="sponsor-card">Partner</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Documents -->
+    <section id="portfolios">
+        <h3 class="section-title reveal">Engineering & Enterprise</h3>
+        <div class="portfolio-grid">
+            <div class="portfolio-card reveal">
+                <h4>Engineering Portfolio</h4>
+                <p>Deep-dive analysis on fluid dynamics, chassis design optimization, and machining tolerances.</p>
+                <a href="#" class="btn">View Document</a>
+            </div>
+            <div class="portfolio-card reveal">
+                <h4>Enterprise Portfolio</h4>
+                <p>Brand activation strategy, corporate outreach systems, budget tracking, and project workflow matrices.</p>
+                <a href="#" class="btn">View Document</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dedicated Interactive Contact Section -->
+    <section id="contact">
+        <h3 class="section-title reveal">Connect With Us</h3>
+        <div class="contact-box reveal">
+            <p>Interested in supporting our journey? Contact us here for corporate sponsorship enquiries, corporate partnerships, or general team questions. Launch an immediate connection link below.</p>
+            <a href="mailto:Photonstemracing@gmail.com?subject=Photon%20Sponsorship%20Enquiry" class="btn">Launch Email App</a>
+        </div>
+    </section>
+
+    <!-- Affiliated Institutional Logos Section -->
+    <div class="institutional-logos">
+        <h5>Affiliated Entities</h5>
+        <div class="logo-flex">
+            <a href="https://rea.org.au/f1-in-schools/" target="_blank" class="logo-item reveal">
+                <div class="logo-wrapper">
+                    <img src="stem_racing_logo.PNG" alt="STEM Racing Australia">
+                </div>
+                <p>STEM Racing</p>
+            </a>
+            <a href="https://riversidehigh.education.tas.edu.au/" target="_blank" class="logo-item reveal">
+                <div class="logo-wrapper">
+                    <img src="riverside_logo.JPG" alt="Riverside High School Launceston">
+                </div>
+                <p>Riverside High School</p>
+            </a>
+        </div>
+    </div>
 
     <footer>
-        <p>&copy; 2026 PHOTON STEM Racing Team. Launceston, Tasmania.</p>
+        <p>&copy; 2026 PHOTON. ALL RIGHTS RESERVED.</p>
     </footer>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
+        if (window.history.scrollRestoration) {
+            window.history.scrollRestoration = 'manual';
+        }
+        if (window.location.hash) {
+            history.replaceState("", document.title, window.location.pathname + window.location.search);
+        }
+        window.scrollTo(0, 0);
+
+        function initializeGridGlowSystem() {
+            const glowTargetBox = document.getElementById('glow-particles-container');
+            glowTargetBox.innerHTML = ''; 
             
-            // --- CORE SELECTORS ---
-            const viewer = document.getElementById('car-viewer');
-            const particleSystem = document.getElementById('particle-system');
-            const modeBtn = document.getElementById('mode-btn');
-            const fsBtn = document.getElementById('fs-btn');
-            const sceneWrapper = document.getElementById('scene-wrapper');
+            const bodyBoundingHeight = Math.max(
+                document.body.scrollHeight, 
+                document.body.offsetHeight, 
+                document.documentElement.clientHeight, 
+                document.documentElement.scrollHeight, 
+                document.documentElement.offsetHeight
+            );
 
-            let isInteractive = false;
+            const documentPixelsToVwUnits = bodyBoundingHeight / window.innerWidth * 100;
+            const totalGlowPoints = 40; 
 
-            // --- 1. PARTICLE GENERATOR ---
-            // Fills the 200% oversized container with varying orbs
-            function generateOrbs() {
-                particleSystem.innerHTML = ''; 
-                const orbCount = window.innerWidth > 1000 ? 120 : 60; // Scale density by screen size
-
-                for (let i = 0; i < orbCount; i++) {
-                    const orb = document.createElement('div');
-                    orb.className = 'orb';
-                    
-                    // Randomized sizing and positioning
-                    const size = Math.random() * 60 + 20; 
-                    orb.style.width = `${size}px`;
-                    orb.style.height = `${size}px`;
-                    orb.style.left = `${Math.random() * 100}%`;
-                    orb.style.top = `${Math.random() * 100}%`;
-                    
-                    // Depth variation
-                    orb.style.opacity = Math.random() * 0.5 + 0.1;
-                    
-                    particleSystem.appendChild(orb);
-                }
-            }
-
-            // --- 2. ORBIT TRACKING (The "Move With Car" Mechanic) ---
-            // Captures theta continuously during auto-rotate AND user-drag
-            viewer.addEventListener('camera-change', () => {
-                const orbit = viewer.getCameraOrbit();
-                // Apply reverse theta to container to create parallax tracking
-                particleSystem.style.transform = `rotate(${orbit.theta}rad)`;
-            });
-
-            // --- 3. INTERACTION STATE MACHINE ---
-            modeBtn.addEventListener('click', () => {
-                isInteractive = !isInteractive;
+            for (let i = 0; i < totalGlowPoints; i++) {
+                const node = document.createElement('div');
+                node.classList.add('glow-particle');
                 
-                if (isInteractive) {
-                    // Enter manual inspection mode
-                    viewer.setAttribute('camera-controls', '');
-                    viewer.removeAttribute('auto-rotate');
-                    modeBtn.textContent = 'Lock Canvas';
-                    modeBtn.classList.add('active');
-                } else {
-                    // Return to cinematic presentation
-                    viewer.removeAttribute('camera-controls');
-                    viewer.setAttribute('auto-rotate', '');
-                    modeBtn.textContent = 'Explore Car';
-                    modeBtn.classList.remove('active');
-                    
-                    // Smoothly reset camera to default hero angle
-                    viewer.cameraOrbit = '180deg 75deg 105%';
+                const nodeX = Math.random() * 100; 
+                const nodeY = Math.random() * documentPixelsToVwUnits; 
+                
+                const nodeSize = 15 + (Math.random() * 40);
+                const nodeBreatheDuration = 4 + (Math.random() * 5); 
+                const nodePhaseOffset = Math.random() * -8; 
+
+                node.style.setProperty('--x', `${nodeX}vw`);
+                node.style.setProperty('--y', `${nodeY}vw`);
+                node.style.setProperty('--size', `${nodeSize}px`);
+                node.style.setProperty('--pulse-duration', `${nodeBreatheDuration}s`);
+                node.style.setProperty('--pulse-delay', `${nodePhaseOffset}s`);
+                
+                glowTargetBox.appendChild(node);
+            }
+        }
+
+        window.addEventListener('load', initializeGridGlowSystem);
+        let resizeDebounceTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeDebounceTimer);
+            resizeDebounceTimer = setTimeout(initializeGridGlowSystem, 250);
+        });
+
+        const rootStyle = document.documentElement.style;
+        let ticking = false;
+
+        function processScrollMatrix() {
+            const rawTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+            rootStyle.setProperty('--scroll-y', `${rawTop}px`);
+            ticking = false;
+        }
+
+        function triggerScrollProcess() {
+            if (!ticking) {
+                window.requestAnimationFrame(processScrollMatrix);
+                ticking = true;
+            }
+        }
+
+        window.addEventListener('scroll', triggerScrollProcess, { passive: true });
+        document.addEventListener('scroll', triggerScrollProcess, { passive: true });
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.05
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); 
                 }
             });
+        }, observerOptions);
 
-            // --- 4. FULLSCREEN MANAGER ---
-            fsBtn.addEventListener('click', () => {
-                if (!document.fullscreenElement) {
-                    // Trigger fullscreen on the WRAPPER, taking UI and background with it
-                    sceneWrapper.requestFullscreen().catch(err => {
-                        console.error(`Fullscreen request failed: ${err.message}`);
-                    });
-                } else {
+        document.querySelectorAll('.reveal').forEach(element => {
+            observer.observe(element);
+        });
+
+        const carViewer = document.getElementById('animated-car');
+        const studioToggle = document.getElementById('studio-master-toggle');
+        const fullscreenWidget = document.getElementById('fullscreen-widget');
+        const heroTextContainer = document.getElementById('hero-text-container');
+        
+        let orbitTimeline = 0;
+        let isStudioInteractive = false;
+
+        function renderCinematicFlyby() {
+            if (isStudioInteractive) return;
+
+            orbitTimeline += 0.0022; 
+
+            const horizontalOrbit = (orbitTimeline * 180 / Math.PI) % 360; 
+            const verticalSweep = 66 + (Math.sin(orbitTimeline * 1.5) * 7); 
+            const dynamicZoomRadius = 92 + (Math.cos(orbitTimeline * 1.1) * 16); 
+
+            carViewer.cameraOrbit = `${horizontalOrbit}deg ${verticalSweep}deg ${dynamicZoomRadius}%`;
+
+            requestAnimationFrame(renderCinematicFlyby);
+        }
+
+        carViewer.addEventListener('load', () => {
+            carViewer.cameraOrbit = '180deg 45deg 120%';
+            carViewer.jumpCameraToGoal();
+
+            setTimeout(() => {
+                renderCinematicFlyby();
+            }, 400);
+        });
+
+        studioToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            if (!isStudioInteractive) {
+                // Turn ON Interactive Studio Mode
+                isStudioInteractive = true;
+                carViewer.setAttribute('camera-controls', '');
+                carViewer.style.pointerEvents = 'auto';
+                
+                heroTextContainer.style.opacity = '0';
+                fullscreenWidget.classList.add('visible-widget');
+                
+                studioToggle.textContent = 'Lock Canvas';
+                studioToggle.classList.add('active-studio');
+            } else {
+                // Turn OFF Interactive Studio Mode (The Revert Process)
+                isStudioInteractive = false;
+                carViewer.removeAttribute('camera-controls');
+                carViewer.style.pointerEvents = 'none';
+                
+                heroTextContainer.style.opacity = '1';
+                fullscreenWidget.classList.remove('visible-widget');
+                
+                studioToggle.textContent = 'Explore Car';
+                studioToggle.classList.remove('active-studio');
+
+                // 1. Re-align the mathematical timeline point perfectly facing the user
+                orbitTimeline = Math.PI; 
+                
+                // 2. Pre-calculate the exact coordinates of the cinematic route at that specific timeline frame
+                const targetHorizontal = (orbitTimeline * 180 / Math.PI) % 360; 
+                const targetVertical = 66 + (Math.sin(orbitTimeline * 1.5) * 7); 
+                const targetZoom = 92 + (Math.cos(orbitTimeline * 1.1) * 16); 
+                
+                // 3. Dispatch a single static coordinate change and let the built-in interpolator smoothly glide the viewer back
+                carViewer.cameraOrbit = `${targetHorizontal}deg ${targetVertical}deg ${targetZoom}%`;
+                
+                // 4. Wait 1.8 seconds for the glide to physically complete before flooding it with animation frame updates
+                setTimeout(() => {
+                    if (!isStudioInteractive) {
+                        renderCinematicFlyby();
+                    }
+                }, 1800); 
+            }
+        });
+
+        const viewRenderContainer = document.getElementById('car-viewer');
+
+        fullscreenWidget.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                if (viewRenderContainer.requestFullscreen) {
+                    viewRenderContainer.requestFullscreen();
+                } else if (viewRenderContainer.webkitRequestFullscreen) { 
+                    viewRenderContainer.webkitRequestFullscreen();
+                }
+                fullscreenWidget.innerHTML = '<span>内</span> Close Screen';
+            } else {
+                if (document.exitFullscreen) {
                     document.exitFullscreen();
                 }
-            });
+                fullscreenWidget.innerHTML = '<span>⛶</span> Fullscreen';
+            }
+        });
 
-            // Update UI button text based on actual fullscreen state
-            document.addEventListener('fullscreenchange', () => {
-                if (document.fullscreenElement) {
-                    fsBtn.textContent = 'Exit UI';
-                    fsBtn.classList.add('active');
-                } else {
-                    fsBtn.textContent = 'Fullscreen UI';
-                    fsBtn.classList.remove('active');
-                }
-            });
-
-            // --- 5. RESPONSIVE MAINTENANCE ---
-            // Debounced resize listener to recalculate particles without crashing
-            let resizeTimer;
-            window.addEventListener('resize', () => {
-                clearTimeout(resizeTimer);
-                resizeTimer = setTimeout(generateOrbs, 250);
-            });
-
-            // --- BOOT ---
-            generateOrbs();
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                fullscreenWidget.innerHTML = '<span>⛶</span> Fullscreen';
+            }
         });
     </script>
 </body>
