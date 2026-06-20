@@ -205,6 +205,8 @@
             width: 100%;
             height: 480px;
             background: radial-gradient(circle at center, #111111 0%, #020202 100%);
+            /* Smooth camera interpolation speed for manual/scripted transitions */
+            --interpolation-decay: 12;
         }
 
         .viewer-details {
@@ -582,7 +584,7 @@
     <nav>
         <h1 onclick="window.location.href=window.location.pathname">PHOTON</h1>
         <ul>
-            <li><a href="#hero">Track</a></li>
+            <li><a href="#hero">car</a></li>
             <li><a href="#team">Team</a></li>
             <li><a href="#sponsors">Partners</a></li>
             <li><a href="#portfolios">Docs</a></li>
@@ -596,10 +598,11 @@
         
         <div id="car-viewer" class="reveal">
             <model-viewer 
+                id="animated-car"
                 src="2024aramidversion2.0029.glb" 
                 alt="Aramid - 2024 fastest car" 
                 camera-controls 
-                auto-rotate 
+                autoplay
                 shadow-intensity="1"
                 exposure="1.2">
             </model-viewer>
@@ -726,7 +729,7 @@
         <h3 class="section-title reveal">Connect With Us</h3>
         <div class="contact-box reveal">
             <p>Interested in supporting our journey? Contact us here for corporate sponsorship enquiries, corporate partnerships, or general team questions. Launch an immediate connection link below.</p>
-            <a href="mailto:photonf1team@example.com?subject=Photon%20Sponsorship%20Enquiry" class="btn">Launch Email App</a>
+            <a href="mailto:Photonstemracing@gmail.com?subject=Photon%20Sponsorship%20Enquiry" class="btn">Launch Email App</a>
         </div>
     </section>
 
@@ -822,6 +825,29 @@
 
         document.querySelectorAll('.reveal').forEach(element => {
             observer.observe(element);
+        });
+
+        /* ==========================================================================
+           CINEMATIC 3D CAMERA REVEAL ANIMATION ENGINE
+           ========================================================================== */
+        const carViewer = document.getElementById('animated-car');
+
+        carViewer.addEventListener('load', () => {
+            // STEP 1: Set up a high-altitude, dramatic top-rear angle initialization point
+            carViewer.cameraOrbit = '180deg 30deg 110%';
+            carViewer.jumpCameraToGoal(); // Lock it instantly without rendering frames
+
+            // STEP 2: Execute a sweeping low profile side transition
+            setTimeout(() => {
+                carViewer.cameraOrbit = '90deg 75deg 95%';
+            }, 400);
+
+            // STEP 3: Ease into the permanent slow turntable spin mode
+            setTimeout(() => {
+                carViewer.cameraOrbit = '45deg 70deg 100%';
+                // Kick off continuous gentle rotation after the script completes
+                carViewer.autoRotate = true;
+            }, 3200);
         });
     </script>
 </body>
