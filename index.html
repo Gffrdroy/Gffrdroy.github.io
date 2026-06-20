@@ -142,60 +142,63 @@
             box-shadow: 0 0 15px rgba(255, 235, 0, 0.5);
         }
 
-        /* Hero / Launch Section */
+        /* Fullscreen-Bleed Cinematic Hero Layout Block */
         #hero {
+            position: relative;
+            width: 100vw;
+            height: calc(100vh - 84px); /* Fills available screen below header */
+            min-height: 550px;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
+            justify-content: flex-start;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            min-height: 90vh;
-            padding: 40px 20px;
-            box-sizing: border-box;
-            perspective: 1000px;
         }
 
         #hero h2 {
-            font-size: 5.5rem;
+            position: absolute;
+            top: 8%;
+            z-index: 10;
+            font-size: 6rem;
             text-transform: uppercase;
             letter-spacing: -1px;
-            margin: 0 0 10px 0;
+            margin: 0;
             font-weight: 900;
-            color: #000000; 
+            color: var(--primary-yellow); 
+            text-shadow: 0 0 30px rgba(255, 235, 0, 0.35);
+            pointer-events: none; /* Allows mouse interactions to pass directly to 3D Canvas */
             will-change: transform;
         }
 
         #hero p {
+            position: absolute;
+            top: 22%;
+            z-index: 10;
             font-size: 1.2rem;
             font-weight: 400;
-            color: var(--primary-yellow);
+            color: #ffffff;
             letter-spacing: 5px;
             text-transform: uppercase;
-            margin: 0 0 45px 0;
-            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+            margin: 0;
             display: inline-block;
             padding: 6px 14px;
             border-radius: 6px;
-            cursor: default;
+            pointer-events: none; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
             will-change: transform;
         }
 
-        #hero p:hover, #hero p:active {
-            color: #000000;
-            background-color: var(--primary-yellow);
-            box-shadow: 0 0 25px rgba(255, 235, 0, 0.5);
-        }
-
-        /* 3D Showcase Container Framework */
+        /* Fullscreen Cinematic Container Framework */
         #car-viewer {
-            width: 90%;
-            max-width: 1100px;
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 235, 0, 0.15);
-            box-shadow: 0 40px 80px rgba(0,0,0,0.9);
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #020202;
+            z-index: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -203,25 +206,69 @@
 
         model-viewer {
             width: 100%;
-            height: 480px;
-            background: radial-gradient(circle at center, #111111 0%, #020202 100%);
-            /* Smooth camera interpolation speed for manual/scripted transitions */
-            --interpolation-decay: 12;
+            height: 100%;
+            background: radial-gradient(circle at center, #151515 0%, #020202 100%);
+            /* Smooth flight translation tracking config */
+            --interpolation-decay: 6;
         }
 
+        /* Floating Hardware Fullscreen Toggle Widget (Bottom-Left Alignment) */
+        .fullscreen-toggle {
+            position: absolute;
+            bottom: 125px; /* Floats clean above footer caption card layer */
+            left: 40px;
+            z-index: 25;
+            background: rgba(10, 10, 10, 0.7);
+            border: 1px solid rgba(255, 235, 0, 0.35);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .fullscreen-toggle:hover {
+            background: var(--primary-yellow);
+            color: #000000;
+            border-color: var(--primary-yellow);
+            box-shadow: 0 0 20px rgba(255, 235, 0, 0.5);
+            transform: scale(1.02);
+        }
+
+        /* Floating Horizontal Media Description HUD Overlay */
         .viewer-details {
-            padding: 30px;
-            background: rgba(5, 5, 5, 0.85);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 35px 50px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.8) 50%, transparent 100%);
+            border-top: none;
             text-align: left;
+            z-index: 20;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 40px;
         }
 
         .viewer-caption {
-            margin: 0 0 20px 0;
+            margin: 0;
             font-size: 1.1rem;
             line-height: 1.6;
             color: rgba(255, 255, 255, 0.9);
             letter-spacing: 0.3px;
+            max-width: 65%;
         }
 
         .viewer-caption .highlight {
@@ -237,18 +284,27 @@
             background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
             color: #ffffff;
             text-decoration: none;
-            padding: 12px 24px;
+            padding: 14px 28px;
             border-radius: 6px;
             font-weight: 700;
             text-transform: uppercase;
             font-size: 0.8rem;
             letter-spacing: 1px;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            white-space: nowrap;
         }
 
         .instagram-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(220, 39, 67, 0.3);
+        }
+
+        /* Webkit Adjustments for Fullscreen Elements */
+        #car-viewer:fullscreen .fullscreen-toggle {
+            bottom: 40px;
+        }
+        #car-viewer:fullscreen .viewer-details {
+            padding: 50px;
         }
 
         /* General Section Layout */
@@ -593,10 +649,10 @@
     </nav>
 
     <header id="hero">
-        <h2 class="reveal">PHOTON</h2>
-        <p class="reveal">At the speed of light</p>
+        <h2>PHOTON</h2>
+        <p>At the speed of light</p>
         
-        <div id="car-viewer" class="reveal">
+        <div id="car-viewer">
             <model-viewer 
                 id="animated-car"
                 src="2024aramidversion2.0029.glb" 
@@ -604,8 +660,13 @@
                 camera-controls 
                 autoplay
                 shadow-intensity="1"
-                exposure="1.2">
+                exposure="1.25">
             </model-viewer>
+
+            <button class="fullscreen-toggle" id="fullscreen-widget" title="Toggle Fullscreen Render View">
+                <span>⛶</span> Fullscreen
+            </button>
+
             <div class="viewer-details">
                 <p class="viewer-caption">
                     2024 fastest car from previous development team, <span class="highlight">aramid</span>. this is the fastest car in the states history
@@ -828,26 +889,75 @@
         });
 
         /* ==========================================================================
-           CINEMATIC 3D CAMERA REVEAL ANIMATION ENGINE
+           CINEMATIC 3D FLIGHT-PATH & ZOOM ANIMATION CORE
            ========================================================================== */
         const carViewer = document.getElementById('animated-car');
+        let orbitTimeline = 0;
+
+        function renderCinematicFlyby() {
+            // Increment frame ticker mapping to engine clock speed
+            orbitTimeline += 0.0035; 
+
+            // Continuous horizontal orbit value calculated in degrees
+            const horizontalOrbit = (orbitTimeline * 180 / Math.PI) % 360; 
+
+            // Vertical panning loop: Simulates crane sweeps between high & low profiles (68 deg +/- 12 deg)
+            const verticalSweep = 68 + (Math.sin(orbitTimeline * 2.2) * 12); 
+
+            // Smooth Zoom Matrix: Dynamic lens distances shifting between tight close-ups and wide tracking shots
+            const dynamicZoomRadius = 88 + (Math.cos(orbitTimeline * 1.5) * 22); 
+
+            // Apply calculated coordinates back to model tracking engine
+            carViewer.cameraOrbit = `${horizontalOrbit}deg ${verticalSweep}deg ${dynamicZoomRadius}%`;
+
+            // Recall loop on next graphic hardware refresh frame
+            requestAnimationFrame(renderCinematicFlyby);
+        }
 
         carViewer.addEventListener('load', () => {
-            // STEP 1: Set up a high-altitude, dramatic top-rear angle initialization point
-            carViewer.cameraOrbit = '180deg 30deg 110%';
-            carViewer.jumpCameraToGoal(); // Lock it instantly without rendering frames
+            // Set aggressive framing perspective for immediate load layout state
+            carViewer.cameraOrbit = '180deg 40deg 135%';
+            carViewer.jumpCameraToGoal();
 
-            // STEP 2: Execute a sweeping low profile side transition
+            // Hand execution processing rules over to cinematic flight path routine after brief delay
             setTimeout(() => {
-                carViewer.cameraOrbit = '90deg 75deg 95%';
+                renderCinematicFlyby();
             }, 400);
+        });
 
-            // STEP 3: Ease into the permanent slow turntable spin mode
-            setTimeout(() => {
-                carViewer.cameraOrbit = '45deg 70deg 100%';
-                // Kick off continuous gentle rotation after the script completes
-                carViewer.autoRotate = true;
-            }, 3200);
+        /* ==========================================================================
+           HARDWARE REGISTRATION FULLSCREEN INTERACTIVE API
+           ========================================================================== */
+        const fullScreenWidget = document.getElementById('fullscreen-widget');
+        const viewRenderContainer = document.getElementById('car-viewer');
+
+        fullScreenWidget.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                // Request full element display mode across engine targets
+                if (viewRenderContainer.requestFullscreen) {
+                    viewRenderContainer.requestFullscreen();
+                } else if (viewRenderContainer.webkitRequestFullscreen) { /* Safari support */
+                    viewRenderContainer.webkitRequestFullscreen();
+                } else if (viewRenderContainer.msRequestFullscreen) { /* IE11 support */
+                    viewRenderContainer.msRequestFullscreen();
+                }
+                fullScreenWidget.innerHTML = '<span>内</span> Exit Frameless';
+            } else {
+                // Relinquish system window handling ownership
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+                fullScreenWidget.innerHTML = '<span>⛶</span> Fullscreen';
+            }
+        });
+
+        // Event listener syncing hardware exit updates (e.g. pressing ESC key) back to label text
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                fullScreenWidget.innerHTML = '<span>⛶</span> Fullscreen';
+            }
         });
     </script>
 </body>
