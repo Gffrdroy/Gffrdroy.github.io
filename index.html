@@ -36,10 +36,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* PARALLAX LAYER 1: Deep Cinematic Gradient Plane
-           Moves counter-directionally downward at a smooth 0.2x speed scalar.
-           Overscaled and offset to guarantee no raw edge clipping occurs.
-        */
+        /* PARALLAX LAYER 1: Deep Cinematic Gradient Plane */
         #cinematic-bg {
             position: fixed;
             top: -40vh; 
@@ -59,10 +56,7 @@
             transform-origin: center center;
         }
 
-        /* PARALLAX LAYER 2: High-Visibility Cyber Grid Matrix
-           Moves counter-directionally at a faster 0.45x scalar speed.
-           Increased alpha transparency to make layout movement punchy and obvious.
-        */
+        /* PARALLAX LAYER 2: High-Visibility Cyber Grid Matrix */
         #bg-grid-overlay {
             position: fixed;
             top: -40vh;
@@ -249,10 +243,6 @@
             transform: translateY(calc(var(--scroll-y) * 0.35));
         }
 
-        /* CRITICAL REPAIR: Background set to transparent.
-           This destroys the dark occlusion layer so that the parallax grid and 
-           gradient are completely visible underneath and behind the 3D car asset.
-        */
         model-viewer {
             width: 100%;
             height: 100%;
@@ -358,11 +348,16 @@
             box-shadow: 0 10px 25px rgba(220, 39, 67, 0.35);
         }
 
+        /* FULLSCREEN ADJUSTMENTS: Hides text/link layout wrapper and updates button placement */
+        #car-viewer:fullscreen .viewer-details {
+            display: none !important;
+        }
+
         #car-viewer:fullscreen .fullscreen-toggle {
             bottom: 50px;
         }
 
-        /* Content Sections Base (Layered above spatial depth grids explicitly) */
+        /* Content Sections Base */
         section {
             position: relative;
             z-index: 30; 
@@ -880,7 +875,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <script>
-        // Force manual alignment on fresh document boot sequences
         if (window.history.scrollRestoration) {
             window.history.scrollRestoration = 'manual';
         }
@@ -892,12 +886,8 @@
         const rootStyle = document.documentElement.style;
         let ticking = false;
 
-        // ADVANCED HIERARCHICAL PARALLAX SCROLL CONTROLLER
         function processScrollMatrix() {
-            // Evaluates multi-layered scroll offsets cleanly inside browser window or sandboxed iFrames
             const rawTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-            
-            // Updates global CSS Custom Property channel to drive smooth hardware-accelerated layouts
             rootStyle.setProperty('--scroll-y', `${rawTop}px`);
             ticking = false;
         }
@@ -909,12 +899,10 @@
             }
         }
 
-        // Dual-registration pipeline captures native window scrolling and isolated container viewports
         window.addEventListener('scroll', triggerScrollProcess, { passive: true });
         document.addEventListener('scroll', triggerScrollProcess, { passive: true });
         window.addEventListener('resize', triggerScrollProcess, { passive: true });
 
-        // Scroll Intersection Reveal Elements
         const observerOptions = {
             root: null,
             rootMargin: '0px',
@@ -934,9 +922,6 @@
             observer.observe(element);
         });
 
-        /* ==========================================================================
-           CINEMATIC 3D FLIGHT-PATH & INTERACTION STATE MATRIX
-           ========================================================================== */
         const carViewer = document.getElementById('animated-car');
         const studioToggle = document.getElementById('studio-master-toggle');
         const fullscreenWidget = document.getElementById('fullscreen-widget');
@@ -995,9 +980,6 @@
             }
         });
 
-        /* ==========================================================================
-           HARDWARE FULLSCREEN CONTROLS API
-           ========================================================================== */
         const viewRenderContainer = document.getElementById('car-viewer');
 
         fullscreenWidget.addEventListener('click', () => {
